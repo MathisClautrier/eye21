@@ -8,20 +8,20 @@ import torch
 
 class Env():
   def __init__(self, args):
-    self.device = args.device
+    self.device = args["device"]
     self.ale = atari_py.ALEInterface()
-    self.ale.setInt('random_seed', args.seed)
-    self.ale.setInt('max_num_frames_per_episode', args.max_episode_length)
+    self.ale.setInt('random_seed', args["seed"])
+    self.ale.setInt('max_num_frames_per_episode', args["max_episode_length"])
     self.ale.setFloat('repeat_action_probability', 0)  # Disable sticky actions
     self.ale.setInt('frame_skip', 0)
     self.ale.setBool('color_averaging', False)
-    self.ale.loadROM(atari_py.get_game_path(args.game))  # ROM loading must be done after setting options
+    self.ale.loadROM(atari_py.get_game_path(args["game"]))  # ROM loading must be done after setting options
     actions = self.ale.getMinimalActionSet()
     self.actions = dict([i, e] for i, e in zip(range(len(actions)), actions))
     self.lives = 0  # Life counter (used in DeepMind training)
     self.life_termination = False  # Used to check if resetting only from loss of life
-    self.window = args.history_length  # Number of frames to concatenate
-    self.state_buffer = deque([], maxlen=args.history_length)
+    self.window = args["history_length"]  # Number of frames to concatenate
+    self.state_buffer = deque([], maxlen=args["history_length"])
     self.training = True  # Consistent with model training mode
 
   def _get_state(self):
